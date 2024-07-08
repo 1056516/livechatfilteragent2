@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord-Like Chat</title>
+    <style>
+        body {
+            background-color: #36393f;
+            font-family: Arial, sans-serif;
+        }
+        .chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        .chat-messages {
+            height: 300px;
+            overflow-y: scroll;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        .chat-input {
+            display: flex;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        .chat-input button {
+            margin-left: 10px;
+            background-color: transparent;
+            border: none;
+            font-size: large;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input">
+                <input id="messageInput" placeholder="Type your message..." type="text">
+                <button class="btn btn-primary" id="sendButton">📨</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const socket = new WebSocket('ws://localhost:3000');
+
+        // When a message is received from the server
+        socket.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            const chatMessage = document.createElement('div');
+            chatMessage.textContent = message;
+            document.getElementById('chatMessages').appendChild(chatMessage);
+        };
+
+        // When the Send button is clicked
+        document.getElementById('sendButton').addEventListener('click', () => {
+            const message = document.getElementById('messageInput').value;
+            if (message.trim() !== '') {
+                socket.send(message);
+                document.getElementById('messageInput').value = '';
+            }
+        });
+    </script>
+</body>
+</html>
